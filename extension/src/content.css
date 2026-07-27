@@ -1,0 +1,124 @@
+ytd-comment-thread-renderer.winnow-hidden,
+ytd-comment-view-model.winnow-hidden,
+ytd-comment-renderer.winnow-hidden {
+  display: none !important;
+}
+
+.winnow-revealed-flash {
+  animation: winnow-flash 1s ease-out;
+}
+
+@keyframes winnow-flash {
+  0% { background-color: rgba(255, 210, 60, 0.35); }
+  100% { background-color: transparent; }
+}
+
+.winnow-pill {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: var(--yt-spec-badge-chip-background, #f2f2f2);
+  color: var(--yt-spec-text-primary, #0f0f0f);
+  border-radius: 18px;
+  padding: 6px 14px;
+  margin: 8px 0 16px 0;
+  font-size: 13px;
+  font-family: Roboto, Arial, sans-serif;
+  cursor: pointer;
+  width: fit-content;
+  user-select: none;
+}
+
+.winnow-pill:hover {
+  background: var(--yt-spec-10-percent-layer, #e5e5e5);
+}
+
+.winnow-pill-count::before {
+  content: "🧹 ";
+}
+
+.winnow-pill-list {
+  position: absolute;
+  margin-top: 34px;
+  background: var(--yt-spec-brand-background-solid, #fff);
+  border: 1px solid var(--yt-spec-10-percent-layer, #ddd);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  max-height: 240px;
+  overflow-y: auto;
+  min-width: 260px;
+  z-index: 2201;
+}
+
+.winnow-pill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--yt-spec-10-percent-layer, #eee);
+  cursor: default;
+}
+
+.winnow-pill-row:last-child {
+  border-bottom: none;
+}
+
+.winnow-pill-row button {
+  background: none;
+  border: 1px solid var(--yt-spec-10-percent-layer, #ccc);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.winnow-pill-row button:hover {
+  background: var(--yt-spec-10-percent-layer, #eee);
+}
+
+.winnow-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--yt-spec-text-secondary, #606060);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 8px;
+  opacity: 0.85;
+}
+
+.winnow-report-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.winnow-reason-menu {
+  position: absolute;
+  background: var(--yt-spec-brand-background-solid, #fff);
+  border: 1px solid var(--yt-spec-10-percent-layer, #ddd);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 2202;
+  min-width: 200px;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.winnow-reason-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--yt-spec-text-primary, #0f0f0f);
+}
+
+.winnow-reason-menu button:hover {
+  background: var(--yt-spec-10-percent-layer, #f2f2f2);
+}

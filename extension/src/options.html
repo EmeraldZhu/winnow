@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Winnow — Options</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: Roboto, Arial, sans-serif;
+      max-width: 560px;
+      margin: 32px auto;
+      color: #0f0f0f;
+      background: #fff;
+      padding: 0 16px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { color: #f1f1f1; background: #181818; }
+      input, .list-item { background: #262626 !important; border-color: #3a3a3a !important; color: inherit !important; }
+      button.secondary { border-color: #555 !important; color: inherit !important; }
+    }
+    h1 { font-size: 18px; }
+    section { margin-bottom: 28px; }
+    h2 { font-size: 14px; color: #606060; text-transform: uppercase; letter-spacing: .04em; }
+    p.help { color: #707070; font-size: 13px; margin-top: -4px; }
+    .row { display: flex; gap: 8px; margin-bottom: 10px; }
+    input[type=text] { flex: 1; padding: 8px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; }
+    button { padding: 8px 14px; border-radius: 18px; border: 1px solid #ccc; background: #1e5631; color: #fff; cursor: pointer; font-size: 13px; }
+    button.secondary { background: none; color: #0f0f0f; }
+    .list-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 6px; font-size: 13px;
+    }
+    .list-item button { padding: 4px 10px; font-size: 12px; background: none; color: #c0392b; border: 1px solid #c0392b; }
+    #install-id { font-family: monospace; font-size: 12px; padding: 6px 10px; background: #f4f4f4; border-radius: 6px; display: inline-block; }
+    @media (prefers-color-scheme: dark) { #install-id { background: #262626; } }
+    .status { font-size: 12px; color: #1e5631; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🧹 Winnow — Options</h1>
+
+  <section>
+    <h2>Channel allowlist</h2>
+    <p class="help">Comments from these channels/handles are never hidden or auto-reported, even if they trip a rule.</p>
+    <div class="row">
+      <input type="text" id="allow-input" placeholder="@handle or UCxxxxxxxxxxxxxxxxxxxxxx" />
+      <button id="allow-add">Add</button>
+    </div>
+    <div id="allow-list"></div>
+  </section>
+
+  <section>
+    <h2>Install identity</h2>
+    <p class="help">A random ID generated locally, used to rate-limit and de-duplicate reports server-side. It contains no personal information and is never linked to your Google/YouTube account.</p>
+    <span id="install-id"></span>
+    <button class="secondary" id="reset-install">Reset install ID</button>
+    <span class="status" id="reset-status"></span>
+  </section>
+
+  <section>
+    <h2>Blocklist</h2>
+    <p class="help">Current local snapshot version: <strong id="blocklist-version">v0</strong> (<span id="blocklist-count">0</span> channels).
+      Live sync from the shared backend ships in a later phase — for now this reflects only your local additions.</p>
+    <button class="secondary" id="force-refresh">Force blocklist refresh</button>
+    <span class="status" id="refresh-status"></span>
+  </section>
+
+  <script src="storage.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

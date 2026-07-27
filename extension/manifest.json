@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Winnow — YouTube Comment Spam Filter",
+  "version": "0.1.0",
+  "description": "Hides spam and bot comments on YouTube and lets you report the ones it misses.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/watch*"],
+      "js": [
+        "src/heuristics.js",
+        "src/storage.js",
+        "src/dom.js",
+        "src/report.js",
+        "src/content.js"
+      ],
+      "css": ["src/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "src/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["src/rules.json"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ]
+}

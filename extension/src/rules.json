@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "threshold": 1.0,
+  "scorchedEarthThreshold": 0.6,
+  "selectors": {
+    "commentThread": "ytd-comment-thread-renderer",
+    "commentRenderer": "ytd-comment-view-model, ytd-comment-renderer",
+    "commentText": "#content-text",
+    "authorLink": "#author-text",
+    "repliesContainer": "#replies",
+    "commentsSection": "ytd-comments#comments",
+    "commentsContentsList": "#contents",
+    "commentsHeader": "#header",
+    "actionButtons": "#action-buttons"
+  },
+  "categories": {
+    "engagement_farm": {
+      "label": "Engagement farming",
+      "reasonCode": "engagement_farm",
+      "rules": [
+        { "id": "year_bait", "type": "regex", "pattern": "who('?s| is) (still )?watching in \\d{4}", "flags": "i", "weight": 1.0 },
+        { "id": "who_else_here", "type": "regex", "pattern": "who else is here in", "flags": "i", "weight": 1.0 },
+        { "id": "only_one_who", "type": "regex", "pattern": "am i the only one who", "flags": "i", "weight": 0.8 },
+        { "id": "like_if_you", "type": "regex", "pattern": "like if you", "flags": "i", "weight": 0.8 },
+        { "id": "whos_listening", "type": "regex", "pattern": "who'?s listening in", "flags": "i", "weight": 0.9 },
+        { "id": "pure_emoji", "type": "pureEmojiOverLength", "minLength": 6, "weight": 1.0 },
+        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "weight": 1.2 }
+      ]
+    },
+    "promo_link": {
+      "label": "Promo / link spam",
+      "reasonCode": "promo_link",
+      "rules": [
+        { "id": "external_link", "type": "regex", "pattern": "https?:\\/\\/|www\\.[a-z0-9-]+\\.[a-z]{2,}", "flags": "i", "weight": 1.0 },
+        { "id": "whatsapp_obf", "type": "regex", "pattern": "wh[a4]ts?[a4]pp", "flags": "i", "weight": 1.0 },
+        { "id": "telegram_obf", "type": "regex", "pattern": "t\\s*[\\.\\u00b7]\\s*me\\b|tele ?gram", "flags": "i", "weight": 1.0 },
+        { "id": "dm_me", "type": "regex", "pattern": "\\bdm me\\b|\\bdm for\\b|\\btext me\\b", "flags": "i", "weight": 0.9 },
+        { "id": "phone_intl", "type": "regex", "pattern": "\\+\\d{1,3}[\\s-]?\\d{2,4}[\\s-]?\\d{2,4}[\\s-]?\\d{2,4}", "flags": "", "weight": 0.9 },
+        { "id": "spaced_digits", "type": "regex", "pattern": "(\\d[\\s.-]){6,}\\d", "flags": "", "weight": 0.7 },
+        { "id": "broker_cta", "type": "regex", "pattern": "(broker|agent|advisor).{0,20}(contact|reach|message|whatsapp|telegram)", "flags": "i", "weight": 1.1 },
+        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "weight": 1.2 }
+      ]
+    },
+    "finance_chain": {
+      "label": "Financial/crypto scam chain",
+      "reasonCode": "finance_chain",
+      "threadLevel": true,
+      "seedLexicon": ["trading", "profit", "broker", "changed my life", "expert", "invest", "investment", "forex", "crypto", "bitcoin"],
+      "minReplyMatches": 2,
+      "replyWindowSeconds": 3600
+    },
+    "offtopic": {
+      "label": "Off-topic / irrelevant",
+      "reasonCode": "offtopic",
+      "reportOnly": true,
+      "rules": []
+    }
+  }
+}

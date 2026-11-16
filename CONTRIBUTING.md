@@ -11,16 +11,30 @@ writes it. CI enforces the parts marked **(checked)**.
    `docs/proposals/<issue-number>-<slug>.md` from
    [`docs/proposals/TEMPLATE.md`](docs/proposals/TEMPLATE.md) with status
    `Proposed`. It describes the plan before the work is done.
-3. **Branch.** `<type>/<issue-number>-<slug>`, where type is `fix`, `feat`,
-   `docs` or `chore`. Example: `fix/12-reveal-rehides`.
-4. **Pull request.** Fill in every section of the PR template **(checked)**
-   and link the issue with `Closes #N` **(checked)**. Tests must pass
-   **(checked)**.
+3. **Branch.** Cut from `dev`, named `<type>/<issue-number>-<slug>`, where
+   type is `fix`, `feat`, `docs` or `chore`. Example: `fix/12-reveal-rehides`.
+4. **Pull request, into `dev`.** Fill in every section of the PR template
+   **(checked)** and link the issue with `Closes #N` **(checked)**. Tests must
+   pass and the extension's files must be valid **(checked)**.
 5. **Docs, in the same pull request.** Set the proposal's status to
    `Implemented` and record anything that turned out differently from the
    plan. Update every doc the change makes stale (see the table below) and add
    a line to [`CHANGELOG.md`](CHANGELOG.md).
-6. **Merge** by squash, so `master` has one commit per pull request.
+6. **Merge** by squash, so `dev` has one commit per pull request.
+
+## Branches and releases
+
+| Branch | Holds | Receives | Merged by |
+|---|---|---|---|
+| `dev` | Work that is finished but not yet released | Feature branches | Squash |
+| `master` | What is released | Only `dev` **(checked)** | Merge commit |
+
+A release is a pull request from `dev` into `master`. Its description needs
+only a `## Summary` saying what it ships **(checked)**; the changes in it
+were each checked on their way into `dev`. Merge it with a merge commit, not a
+squash: squashing would make `dev` and `master` diverge after every release.
+
+Never commit directly to `dev` or `master`.
 
 ## When a proposal is needed
 

@@ -11,12 +11,16 @@ Follow [`CONTRIBUTING.md`](CONTRIBUTING.md). In short:
    templates' sections.
 2. If the change needs a proposal (table in `CONTRIBUTING.md`), write
    `docs/proposals/<issue-number>-<slug>.md` from the template first.
-3. Work on a branch named `<type>/<issue-number>-<slug>`. Never commit to
-   `master`.
-4. Open a pull request using `.github/PULL_REQUEST_TEMPLATE.md`: keep every
+3. Work on a branch cut from `dev`, named `<type>/<issue-number>-<slug>`.
+   Never commit to `dev` or `master`.
+4. Open a pull request into `dev` (not `master`; CI rejects anything but
+   `dev` there) using `.github/PULL_REQUEST_TEMPLATE.md`: keep every
    heading, fill every section, and include `Closes #N`. CI fails otherwise.
 5. In the same pull request, mark the proposal `Implemented`, update the docs
    the change makes stale, and add a `CHANGELOG.md` line.
+
+Squash-merge pull requests into `dev`. A release is a pull request from
+`dev` into `master`, merged with a merge commit; only make one when asked.
 
 If asked to make a change without an issue, open the issue as part of the
 work rather than skipping it. Pushing and opening issues or pull requests

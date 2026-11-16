@@ -2,11 +2,10 @@ name: CI
 
 on:
   pull_request:
-    branches: [master dev]
+    branches: [master, dev]
     types: [opened, edited, reopened, synchronize]
   push:
-    branches: [master dev]
-
+    branches: [master, dev]
 
 permissions:
   contents: read
@@ -19,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Run the checker from master, so a pull request cannot loosen its own check.
+          # Run the checker from the base branch, so a pull request cannot loosen its own check.
           ref: ${{ github.event.pull_request.base.sha }}
           sparse-checkout: .github/scripts
       - uses: actions/setup-node@v4
@@ -33,7 +32,6 @@ jobs:
             echo "Checker not on the base branch yet; skipping."
           fi
 
-
   validate:
     name: Validate extension
     runs-on: ubuntu-latest
@@ -45,7 +43,7 @@ jobs:
       - name: JSON files parse
         run: |
           for f in extension/manifest.json extension/src/rules.json; do
-            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f" || exit 1
           done
       - name: JS syntax
         run: for f in extension/src/*.js; do node --check "$f" || exit 1; done
@@ -55,12 +53,18 @@ jobs:
     if: github.event_name == 'pull_request' && github.base_ref == 'master'
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          if [ "${{ github.head_ref }}" != "dev" ]; then
-            echo "PRs into master must come from dev."; exit 1
+      - name: Check source branch
+        # Values come in through env, not inline, so a branch name cannot inject shell.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REF" != "dev" ] || [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "Pull requests into master must come from this repository's dev branch."
+            echo "Open this one against dev instead. See CONTRIBUTING.md."
+            exit 1
           fi
-
-
 
   tests:
     name: Tests

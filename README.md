@@ -84,5 +84,6 @@ extension/
 
 ## Contributing
 
-Every change goes through an issue and a pull request in a fixed shape. See
+Every change goes through an issue and a pull request into `dev` in a fixed
+shape; `master` is updated from `dev` at each release. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md).

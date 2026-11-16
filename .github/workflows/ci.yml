@@ -2,9 +2,11 @@ name: CI
 
 on:
   pull_request:
+    branches: [master dev]
     types: [opened, edited, reopened, synchronize]
   push:
-    branches: [master]
+    branches: [master dev]
+
 
 permissions:
   contents: read
@@ -30,6 +32,35 @@ jobs:
           else
             echo "Checker not on the base branch yet; skipping."
           fi
+
+
+  validate:
+    name: Validate extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JSON files parse
+        run: |
+          for f in extension/manifest.json extension/src/rules.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1
+          done
+      - name: JS syntax
+        run: for f in extension/src/*.js; do node --check "$f" || exit 1; done
+
+  master-from-dev-only:
+    name: Master only accepts dev
+    if: github.event_name == 'pull_request' && github.base_ref == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [ "${{ github.head_ref }}" != "dev" ]; then
+            echo "PRs into master must come from dev."; exit 1
+          fi
+
+
 
   tests:
     name: Tests

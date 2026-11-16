@@ -11,6 +11,7 @@
   const refreshStatus = document.getElementById('refresh-status');
   const blocklistVersionEl = document.getElementById('blocklist-version');
   const blocklistCountEl = document.getElementById('blocklist-count');
+  const blockList = document.getElementById('block-list');
 
   async function renderAllowlist() {
     const list = await WinnowStorage.getAllowlist();
@@ -63,6 +64,22 @@
     const bl = await WinnowStorage.getBlocklist();
     blocklistVersionEl.textContent = `v${bl.version}`;
     blocklistCountEl.textContent = bl.channelIds.length;
+    blockList.textContent = '';
+    for (const id of bl.channelIds) {
+      const row = document.createElement('div');
+      row.className = 'list-item';
+      const label = document.createElement('span');
+      label.textContent = id;
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Unblock';
+      removeBtn.addEventListener('click', async () => {
+        await WinnowStorage.removeFromBlocklist(id);
+        renderBlocklist();
+      });
+      row.appendChild(label);
+      row.appendChild(removeBtn);
+      blockList.appendChild(row);
+    }
   }
 
   forceRefreshBtn.addEventListener('click', async () => {

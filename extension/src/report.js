@@ -21,7 +21,7 @@
   async function submitReport({ authorId, text, reasonCode, videoId, rulesVersion }) {
     const installId = await global.WinnowStorage.getInstallId();
     const commentHash = global.WinnowHeuristics.simpleHash((text || '').trim().toLowerCase());
-    await global.WinnowStorage.queueReport({
+    const added = await global.WinnowStorage.queueReport({
       channelId: authorId,
       reasonCode,
       commentHash,
@@ -29,7 +29,7 @@
       rulesVersion,
       installId,
     });
-    await global.WinnowStorage.incrementStat('reportsContributed', 1);
+    if (added) await global.WinnowStorage.incrementStat('reportsContributed', 1);
   }
 
   function openReasonMenu(anchorBtn, onPick) {

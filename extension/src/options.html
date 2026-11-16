@@ -59,8 +59,10 @@
 
   <section>
     <h2>Blocklist</h2>
-    <p class="help">Current local snapshot version: <strong id="blocklist-version">v0</strong> (<span id="blocklist-count">0</span> channels).
-      Live sync from the shared backend ships in a later phase — for now this reflects only your local additions.</p>
+    <p class="help">Accounts you report as spam are blocked here, and all their comments are hidden.
+      Current local snapshot version: <strong id="blocklist-version">v0</strong> (<span id="blocklist-count">0</span> channels).
+      Live sync from the shared backend ships in a later phase — for now this reflects only your own reports.</p>
+    <div id="block-list"></div>
     <button class="secondary" id="force-refresh">Force blocklist refresh</button>
     <span class="status" id="refresh-status"></span>
   </section>

@@ -37,6 +37,8 @@ still needs the user's go-ahead unless they have already given it.
 - `extension/src/rules.json` is data only (patterns, weights, selectors).
   Never put executable code in it; that is a Chrome Web Store rejection.
 - The extension makes no network calls. Adding one needs a proposal.
+- `PRIVACY.md` lists everything the extension stores. A change to what is
+  stored, read or sent must update it in the same pull request.
 - Behaviour that depends on YouTube's DOM must be checked on a live page, not
   only in unit tests. Say in the PR what was checked and how.
 - Report what was not verified as plainly as what was.

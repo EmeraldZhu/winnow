@@ -1,0 +1,38 @@
+# Instructions for AI assistants
+
+Winnow is a Chrome (MV3) extension that hides spam in YouTube comments. The
+design is in `winnow-mvp-spec.md`; the code is in `extension/`.
+
+## Workflow: required for every change
+
+Follow [`CONTRIBUTING.md`](CONTRIBUTING.md). In short:
+
+1. Find or open the companion issue before changing anything. Use the issue
+   templates' sections.
+2. If the change needs a proposal (table in `CONTRIBUTING.md`), write
+   `docs/proposals/<issue-number>-<slug>.md` from the template first.
+3. Work on a branch named `<type>/<issue-number>-<slug>`. Never commit to
+   `master`.
+4. Open a pull request using `.github/PULL_REQUEST_TEMPLATE.md`: keep every
+   heading, fill every section, and include `Closes #N`. CI fails otherwise.
+5. In the same pull request, mark the proposal `Implemented`, update the docs
+   the change makes stale, and add a `CHANGELOG.md` line.
+
+If asked to make a change without an issue, open the issue as part of the
+work rather than skipping it. Pushing and opening issues or pull requests
+still needs the user's go-ahead unless they have already given it.
+
+## Commands
+
+- Tests: `node --test tests/*.test.js`
+- Check a PR body locally: `node .github/scripts/check-pr.js <file-with-body>`
+- Run the extension: load `extension/` unpacked at `chrome://extensions`.
+
+## Things to know
+
+- `extension/src/rules.json` is data only (patterns, weights, selectors).
+  Never put executable code in it; that is a Chrome Web Store rejection.
+- The extension makes no network calls. Adding one needs a proposal.
+- Behaviour that depends on YouTube's DOM must be checked on a live page, not
+  only in unit tests. Say in the PR what was checked and how.
+- Report what was not verified as plainly as what was.

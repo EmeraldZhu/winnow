@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-format:
+    name: PR follows template
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Run the checker from master, so a pull request cannot loosen its own check.
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check description
+        run: |
+          if [ -f .github/scripts/check-pr.js ]; then
+            node .github/scripts/check-pr.js
+          else
+            echo "Checker not on the base branch yet; skipping."
+          fi
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run tests
+        run: |
+          if ls tests/*.test.js >/dev/null 2>&1; then
+            node --test tests/*.test.js
+          else
+            echo "No tests on this branch."
+          fi

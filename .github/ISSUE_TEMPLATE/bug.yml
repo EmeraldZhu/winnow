@@ -1,0 +1,25 @@
+name: Bug
+description: Something does not work as intended
+labels: [bug]
+body:
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong
+      description: What happens, and what should happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: found
+    attributes:
+      label: How it was found
+      description: Steps to reproduce, or how it was observed (page, browser, extension version).
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we will know it is fixed.
+    validations:
+      required: true

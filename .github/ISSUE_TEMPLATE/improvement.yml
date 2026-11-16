@@ -1,0 +1,36 @@
+name: Improvement
+description: A feature, change or suggestion
+labels: [enhancement]
+body:
+  - type: textarea
+    id: proposed
+    attributes:
+      label: What is proposed
+      description: The change, in plain terms.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: The problem it solves, and for whom (viewer, creator, contributor).
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: What has to be true for this to be closed.
+    validations:
+      required: true
+  - type: dropdown
+    id: proposal
+    attributes:
+      label: Needs a proposal doc?
+      description: See the table in CONTRIBUTING.md.
+      options:
+        - "Yes"
+        - "No"
+        - Not sure
+    validations:
+      required: true

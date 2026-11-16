@@ -73,3 +73,8 @@ extension/
     options.html/js      options page
     content.css
 ```
+
+## Contributing
+
+Every change goes through an issue and a pull request in a fixed shape. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

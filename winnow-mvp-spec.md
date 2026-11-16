@@ -161,9 +161,9 @@ No client-side heuristic. Users can flag with `reason=offtopic`; reports accumul
 - **Never transmitted:** video IDs, watch history, search terms, comment bodies, user identity
 - Public dumps contain **promoted channel IDs only** — never the `reports` or `installs` tables
 - Channel IDs are personal data under GDPR and Kenya's DPA 2019 → erasure route must exist (the appeals channel doubles as this)
-- Privacy policy published before store submission
+- Privacy policy: [`PRIVACY.md`](PRIVACY.md). It must be rewritten before any release that sends data
 
-**Licensing:** code MIT or AGPL; blocklist ODbL. Promotion algorithm published for auditability.
+**Licensing:** code AGPL-3.0 ([`LICENSE`](LICENSE)); blocklist ODbL. Promotion algorithm published for auditability.
 
 ---
 

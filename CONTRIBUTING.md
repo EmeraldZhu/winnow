@@ -58,6 +58,7 @@ its own pull request first when the plan itself needs a decision.
 | If you change… | Update… |
 |---|---|
 | What the extension does or how to run it | `README.md` |
+| What the extension stores, reads or sends, or its permissions | `PRIVACY.md` |
 | Scope, architecture, data model, detection rules, privacy | `winnow-mvp-spec.md` |
 | Anything a user or contributor would notice | `CHANGELOG.md` |
 | The plan in a proposal | That proposal (status, and a "What changed from the plan" note) |
@@ -78,6 +79,11 @@ node --test tests/*.test.js
 Changes to the scoring engine or storage layer need a test. Changes that only
 show up in the browser need the manual check written down in the PR's Testing
 section: what was loaded, on which page, and what was observed.
+
+## Licence of contributions
+
+Winnow is licensed under [AGPL-3.0](LICENSE). By opening a pull request you
+agree that your contribution is licensed under the same terms.
 
 ## AI-assisted changes
 

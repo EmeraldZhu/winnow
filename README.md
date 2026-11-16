@@ -87,3 +87,18 @@ extension/
 Every change goes through an issue and a pull request into `dev` in a fixed
 shape; `master` is updated from `dev` at each release. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Privacy
+
+Winnow sends nothing anywhere; everything it stores stays in your browser. See
+[`PRIVACY.md`](PRIVACY.md).
+
+## Licence
+
+Copyright © 2026 the Winnow contributors.
+
+Winnow is free software, released under the
+[GNU Affero General Public License, version 3](LICENSE) (AGPL-3.0-only). You
+may use, change and share it. If you distribute a changed version, or run one
+as a service that other people use over a network, you must make your source
+code available under the same licence.

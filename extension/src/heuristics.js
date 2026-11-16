@@ -80,39 +80,133 @@
     return best;
   }
 
-  // Structural, thread-level pass for financial/crypto scam chains (spec §5C).
-  // `thread` = { seedText, seedAuthorId, replies: [{authorId, text, timestamp}], threadAuthors: Set<authorId> }
+  // --- Financial/crypto scam chains (spec §5C) --------------------------
+  // The pattern: a seed comment about money, then several throwaway accounts
+  // replying to recommend the same named "expert". The name is the signal,
+  // so the pass is built around finding one that independent replies share.
+
+  const TITLE_RE = /^(?:mr|mrs|ms|miss|dr|sir|madam)\.?\s+/i;
+  const NAME_RE = /\p{Lu}[\p{L}'’.-]+(?:\s+\p{Lu}[\p{L}'’-]+){1,3}/gu;
+  const HANDLE_RE = /@[\w.-]{3,}/g;
+  // Capitalised sentence openers that are not names.
+  const NOT_NAME_START = new Set([
+    'the', 'this', 'that', 'these', 'those', 'thanks', 'thank', 'great', 'good', 'nice', 'love', 'best',
+    'what', 'when', 'where', 'why', 'how', 'who', 'and', 'but', 'you', 'your', 'not', 'yes', 'well',
+    'just', 'very', 'please', 'happy', 'merry', 'god', 'lol', 'omg', 'wow',
+  ]);
+
+  // Names and @handles a comment mentions, lower-cased, titles stripped.
+  // `participantIds` are the thread's own authors: YouTube prefixes every
+  // reply with "@whoever-it-answers", which is not a recommendation.
+  function extractEntities(text, participantIds) {
+    const found = new Set();
+    for (const m of text.match(NAME_RE) || []) {
+      const name = m.replace(TITLE_RE, '').replace(/\s+/g, ' ').trim().toLowerCase();
+      if (name.length < 5) continue;
+      if (NOT_NAME_START.has(name.split(' ')[0])) continue;
+      found.add(name);
+    }
+    for (const m of text.match(HANDLE_RE) || []) {
+      const handle = m.toLowerCase().replace(/[.-]+$/, '');
+      if (participantIds && participantIds.has(handle)) continue;
+      found.add(handle);
+    }
+    return found;
+  }
+
+  const TIME_UNITS = { second: 1, minute: 60, hour: 3600, day: 86400, week: 604800, month: 2592000, year: 31536000 };
+
+  // "3 days ago (edited)" -> { age: 259200, unit: 86400 }. YouTube only shows
+  // relative, rounded times, so `unit` is carried as the precision. Returns
+  // null for anything unparseable (e.g. a non-English UI).
+  function parseRelativeTime(str) {
+    const m = /(\d+)\s+(second|minute|hour|day|week|month|year)s?\s+ago/i.exec(str || '');
+    if (!m) return null;
+    const unit = TIME_UNITS[m[2].toLowerCase()];
+    return { age: Number(m[1]) * unit, unit };
+  }
+
+  // `thread` = {
+  //   seedText, seedAuthorId,
+  //   replies: [{ authorId, text, timeText }],
+  //   threadAuthorCounts: Map<authorId, comments in this thread>,
+  //   videoAuthorCounts:  Map<authorId, comments in all loaded threads>,
+  // }
+  // Fires when all hold (spec §5C):
+  //   1. the seed matches the finance lexicon (whole words);
+  //   2. >= minReplyMatches replies, from different authors, name the same entity;
+  //   3. those authors have commented nowhere else on this video;
+  //   4. those replies were posted close together, as far as YouTube's
+  //      rounded timestamps can show.
+  // Returns { entity, hideThread, replyIndexes, implicated: [{authorId, text}] }.
+  // The whole thread goes only if the seed names the entity too; otherwise
+  // the seed may be an ordinary comment the ring replied under, so only the
+  // matching replies are hidden and reported.
   function evaluateFinanceChain(thread, rulesDoc) {
     const cat = rulesDoc.categories.finance_chain;
-    if (!cat) return null;
-    const seedLower = thread.seedText.toLowerCase();
-    const seedHit = cat.seedLexicon.some((term) => seedLower.includes(term));
-    if (!seedHit) return null;
-
-    // Find the entity the seed names: crude heuristic — any @handle-like or
-    // capitalized multi-word token shared with replies. Fall back to just
-    // requiring replies that echo seed-adjacent finance lexicon + novelty.
-    const novelReplies = thread.replies.filter(
-      (r) => !thread.threadAuthors.has(r.authorId) || thread.threadAuthors.get(r.authorId) === 1
-    );
-    if (novelReplies.length < (cat.minReplyMatches || 2)) return null;
-
-    const timestamps = novelReplies.map((r) => r.timestamp).filter(Boolean);
-    if (timestamps.length >= 2) {
-      const span = Math.max(...timestamps) - Math.min(...timestamps);
-      if (span > (cat.replyWindowSeconds || 3600) * 1000) return null;
+    if (!cat || !cat.seedPattern) return null;
+    let seedRe;
+    try {
+      seedRe = new RegExp(cat.seedPattern, 'i');
+    } catch (e) {
+      return null;
     }
+    if (!seedRe.test(thread.seedText || '')) return null;
 
+    const minMatches = cat.minReplyMatches || 2;
+    const windowSeconds = cat.replyWindowSeconds || 86400;
+    const participants = new Set();
+    for (const id of thread.threadAuthorCounts.keys()) participants.add(String(id).toLowerCase());
+
+    const isNovel = (authorId) =>
+      (thread.videoAuthorCounts.get(authorId) || 0) <= (thread.threadAuthorCounts.get(authorId) || 0);
+
+    const seedEntities = extractEntities(thread.seedText, participants);
+    const candidates = new Set(seedEntities);
+    const replies = thread.replies.map((r, index) => {
+      for (const e of extractEntities(r.text || '', participants)) candidates.add(e);
+      return { ...r, index, lower: (r.text || '').toLowerCase() };
+    });
+
+    let best = null;
+    for (const entity of candidates) {
+      const byAuthor = new Map();
+      for (const r of replies) {
+        if (!r.authorId || r.authorId === thread.seedAuthorId) continue;
+        if (!r.lower.includes(entity) || !isNovel(r.authorId)) continue;
+        if (!byAuthor.has(r.authorId)) byAuthor.set(r.authorId, r);
+      }
+      if (byAuthor.size < minMatches) continue;
+
+      const matched = [...byAuthor.values()];
+      const times = matched.map((r) => parseRelativeTime(r.timeText)).filter(Boolean);
+      if (times.length >= 2) {
+        const span = Math.max(...times.map((t) => t.age)) - Math.min(...times.map((t) => t.age));
+        const precision = Math.max(...times.map((t) => t.unit));
+        if (span > Math.max(windowSeconds, precision)) continue;
+      }
+      if (!best || matched.length > best.matched.length) best = { entity, matched };
+    }
+    if (!best) return null;
+
+    const hideThread = (thread.seedText || '').toLowerCase().includes(best.entity);
+    const implicated = best.matched.map((r) => ({ authorId: r.authorId, text: r.text }));
+    if (hideThread && thread.seedAuthorId) implicated.unshift({ authorId: thread.seedAuthorId, text: thread.seedText });
     return {
       categoryKey: 'finance_chain',
       reasonCode: cat.reasonCode,
-      implicatedAuthors: [thread.seedAuthorId, ...novelReplies.map((r) => r.authorId)],
+      entity: best.entity,
+      hideThread,
+      replyIndexes: best.matched.map((r) => r.index),
+      implicated,
     };
   }
 
   global.WinnowHeuristics = {
     evaluateComment,
     evaluateFinanceChain,
+    extractEntities,
+    parseRelativeTime,
     isPureEmojiOverLength,
     simpleHash,
   };

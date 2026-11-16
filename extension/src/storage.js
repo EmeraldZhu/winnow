@@ -36,6 +36,17 @@
     return new Promise((resolve) => chrome.storage.local.set(obj, resolve));
   }
 
+  // Every write here is read-modify-write on a whole stored value, and
+  // chrome.storage has no transactions: two overlapping writers each read the
+  // old value and the second overwrites the first. Run them one at a time.
+  // (This serializes writers within one page; two tabs can still interleave.)
+  let writeChain = Promise.resolve();
+  function withLock(fn) {
+    const run = writeChain.then(fn, fn);
+    writeChain = run.catch(() => {});
+    return run;
+  }
+
   async function getInstallId() {
     const { installId } = await get('installId');
     if (installId) return installId;
@@ -55,11 +66,13 @@
     return { ...DEFAULT_SETTINGS, ...(settings || {}), categories: { ...DEFAULT_SETTINGS.categories, ...((settings || {}).categories || {}) } };
   }
 
-  async function setSettings(partial) {
-    const current = await getSettings();
-    const merged = { ...current, ...partial, categories: { ...current.categories, ...(partial.categories || {}) } };
-    await set({ settings: merged });
-    return merged;
+  function setSettings(partial) {
+    return withLock(async () => {
+      const current = await getSettings();
+      const merged = { ...current, ...partial, categories: { ...current.categories, ...(partial.categories || {}) } };
+      await set({ settings: merged });
+      return merged;
+    });
   }
 
   async function getBlocklist() {
@@ -71,6 +84,26 @@
     await set({ blocklist });
   }
 
+  function addToBlocklist(channelId) {
+    return withLock(async () => {
+      const bl = await getBlocklist();
+      if (channelId && !bl.channelIds.includes(channelId)) {
+        bl.channelIds.push(channelId);
+        await setBlocklist(bl);
+      }
+      return bl;
+    });
+  }
+
+  function removeFromBlocklist(channelId) {
+    return withLock(async () => {
+      const bl = await getBlocklist();
+      bl.channelIds = bl.channelIds.filter((id) => id !== channelId);
+      await setBlocklist(bl);
+      return bl;
+    });
+  }
+
   async function getAllowlist() {
     const { allowlist } = await get('allowlist');
     return allowlist || [];
@@ -80,17 +113,21 @@
     await set({ allowlist: list });
   }
 
-  async function addToAllowlist(channelId) {
-    const list = await getAllowlist();
-    if (!list.includes(channelId)) list.push(channelId);
-    await setAllowlist(list);
-    return list;
+  function addToAllowlist(channelId) {
+    return withLock(async () => {
+      const list = await getAllowlist();
+      if (!list.includes(channelId)) list.push(channelId);
+      await setAllowlist(list);
+      return list;
+    });
   }
 
-  async function removeFromAllowlist(channelId) {
-    const list = (await getAllowlist()).filter((id) => id !== channelId);
-    await setAllowlist(list);
-    return list;
+  function removeFromAllowlist(channelId) {
+    return withLock(async () => {
+      const list = (await getAllowlist()).filter((id) => id !== channelId);
+      await setAllowlist(list);
+      return list;
+    });
   }
 
   const HASH_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -131,11 +168,13 @@
     return s;
   }
 
-  async function incrementStat(key, by = 1) {
-    const s = await getStats();
-    s[key] = (s[key] || 0) + by;
-    await set({ stats: s });
-    return s;
+  function incrementStat(key, by = 1) {
+    return withLock(async () => {
+      const s = await getStats();
+      s[key] = (s[key] || 0) + by;
+      await set({ stats: s });
+      return s;
+    });
   }
 
   async function getReportQueue() {
@@ -143,11 +182,23 @@
     return reportQueue || [];
   }
 
-  async function queueReport(report) {
-    const queue = await getReportQueue();
-    queue.push({ ...report, queuedAt: Date.now() });
-    await set({ reportQueue: queue });
-    return queue;
+  // Resolves true if the report was added, false if an identical one (same
+  // channel, reason, video and comment) was already queued.
+  function queueReport(report) {
+    return withLock(async () => {
+      const queue = await getReportQueue();
+      const duplicate = queue.some(
+        (r) =>
+          r.channelId === report.channelId &&
+          r.reasonCode === report.reasonCode &&
+          r.videoHmac === report.videoHmac &&
+          r.commentHash === report.commentHash
+      );
+      if (duplicate) return false;
+      queue.push({ ...report, queuedAt: Date.now() });
+      await set({ reportQueue: queue });
+      return true;
+    });
   }
 
   global.WinnowStorage = {
@@ -157,6 +208,8 @@
     setSettings,
     getBlocklist,
     setBlocklist,
+    addToBlocklist,
+    removeFromBlocklist,
     getAllowlist,
     setAllowlist,
     addToAllowlist,

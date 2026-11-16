@@ -2,8 +2,23 @@
 // Selectors come from rules.json (remote-fetchable) so a YouTube DOM change
 // is a data fix, not a store resubmission (spec §10 risk #1).
 (function (global) {
+  // YouTube renders emoji as <img alt="..."> rather than text, so a plain
+  // textContent read drops them. Walk the subtree and substitute each image's
+  // alt text so emoji-only comments are still visible to the rules.
+  function rawTextOf(node) {
+    let out = '';
+    for (const child of node.childNodes) {
+      if (child.nodeType === 3) out += child.nodeValue;
+      else if (child.nodeType === 1) {
+        if (child.tagName === 'IMG') out += child.getAttribute('alt') || '';
+        else out += rawTextOf(child);
+      }
+    }
+    return out;
+  }
+
   function textOf(el) {
-    return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    return el ? rawTextOf(el).replace(/\s+/g, ' ').trim() : '';
   }
 
   // YouTube author links are usually `/@handle` now rather than `/channel/UC...`.
@@ -23,11 +38,13 @@
   function extractCommentRenderer(rendererEl, selectors) {
     const authorEl = rendererEl.querySelector(selectors.authorLink);
     const textEl = rendererEl.querySelector(selectors.commentText);
+    const timeEl = selectors.publishedTime ? rendererEl.querySelector(selectors.publishedTime) : null;
     return {
       element: rendererEl,
       authorId: authorEl ? authorIdFromHref(authorEl.getAttribute('href')) : null,
       authorName: textOf(authorEl),
       text: textOf(textEl),
+      timeText: textOf(timeEl),
     };
   }
 
@@ -56,7 +73,11 @@
     const section = document.querySelector(selectors.commentsSection);
     if (!section) return [];
     const contents = section.querySelector(selectors.commentsContentsList) || section;
-    return [...contents.querySelectorAll(selectors.commentThread)];
+    // YouTube wraps each reply in its own nested thread element. Only the
+    // outermost ones are threads; the nested ones are reached as replies.
+    return [...contents.querySelectorAll(selectors.commentThread)].filter(
+      (el) => !el.parentElement || !el.parentElement.closest(selectors.commentThread)
+    );
   }
 
   const HIDDEN_ATTR = 'data-winnow-hidden';
@@ -78,11 +99,37 @@
     return true;
   }
 
-  function revealElement(el) {
+  const REVEALED_ATTR = 'data-winnow-revealed';
+
+  // Identifies the comment an element currently shows. A user's "Show" is
+  // remembered against this, so the next scan doesn't hide the comment again,
+  // while a different comment later rendered into the same element is still
+  // evaluated.
+  function signatureOf(comment) {
+    return `${comment.authorId || ''}|${comment.text || ''}`;
+  }
+
+  function unhide(el) {
     el.removeAttribute(HIDDEN_ATTR);
     el.removeAttribute('data-winnow-reason');
     el.classList.remove(HIDDEN_CLASS);
+  }
+
+  function revealElement(el, signature) {
+    unhide(el);
+    el.setAttribute(REVEALED_ATTR, signature || '');
     el.classList.add('winnow-revealed-flash');
+  }
+
+  function isRevealed(el, signature) {
+    return el.hasAttribute(REVEALED_ATTR) && el.getAttribute(REVEALED_ATTR) === (signature || '');
+  }
+
+  // Master switch off: put everything back without marking it as a user reveal.
+  function unhideAll() {
+    for (const el of document.querySelectorAll(`[${HIDDEN_ATTR}]`)) unhide(el);
+    hiddenRegistry.clear();
+    updatePill();
   }
 
   function isHidden(el) {
@@ -94,9 +141,9 @@
   const hiddenRegistry = new Map(); // id -> { element, reasonLabel, isThread }
   let nextHiddenId = 1;
 
-  function registerHidden(element, reasonLabel, isThread, onReveal) {
+  function registerHidden(element, reasonLabel, isThread, onReveal, signature) {
     const id = nextHiddenId++;
-    hiddenRegistry.set(id, { element, reasonLabel, isThread, onReveal });
+    hiddenRegistry.set(id, { element, reasonLabel, isThread, onReveal, signature });
     updatePill();
     return id;
   }
@@ -148,7 +195,7 @@
       btn.textContent = 'Show';
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        revealElement(entry.element);
+        revealElement(entry.element, entry.signature);
         if (entry.onReveal) entry.onReveal();
         unregisterHidden(id);
       });
@@ -190,6 +237,9 @@
     hideRenderer,
     hideThread,
     revealElement,
+    isRevealed,
+    signatureOf,
+    unhideAll,
     isHidden,
     ensurePill,
     registerHidden,

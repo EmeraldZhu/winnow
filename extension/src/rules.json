@@ -7,6 +7,7 @@
     "commentRenderer": "ytd-comment-view-model, ytd-comment-renderer",
     "commentText": "#content-text",
     "authorLink": "#author-text",
+    "publishedTime": "#published-time-text",
     "repliesContainer": "#replies",
     "commentsSection": "ytd-comments#comments",
     "commentsContentsList": "#contents",
@@ -45,9 +46,9 @@
       "label": "Financial/crypto scam chain",
       "reasonCode": "finance_chain",
       "threadLevel": true,
-      "seedLexicon": ["trading", "profit", "broker", "changed my life", "expert", "invest", "investment", "forex", "crypto", "bitcoin"],
+      "seedPattern": "\\b(?:trad(?:e|es|er|ers|ing)|profits?|brokers?|changed my life|financial (?:advis[eo]r|expert|consultant|coach)|invest(?:s|ed|ing|ment|ments|or|ors)?|forex|crypto(?:currency|currencies)?|bitcoin|btc|portfolio|passive income|stock market)\\b",
       "minReplyMatches": 2,
-      "replyWindowSeconds": 3600
+      "replyWindowSeconds": 86400
     },
     "offtopic": {
       "label": "Off-topic / irrelevant",

@@ -55,6 +55,14 @@ reason about server-side.
    the `extension/` folder.
 2. Open any `youtube.com/watch?v=...` video and scroll to comments.
 
+## Tests
+
+```
+node --test tests/*.test.js
+```
+
+Covers the scoring engine and the storage layer (no browser needed).
+
 ## Repo layout
 
 ```

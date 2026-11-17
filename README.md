@@ -63,9 +63,24 @@ node --test tests/*.test.js
 
 Covers the scoring engine and the storage layer (no browser needed).
 
+## Accuracy
+
+```
+node eval/accuracy.js
+```
+
+Runs the scoring engine over the labelled comments in `eval/data/` and prints
+precision and recall per category. [`eval/README.md`](eval/README.md) has the
+current baseline, the data format and how the comments were collected.
+
 ## Repo layout
 
 ```
+eval/
+  accuracy.js           accuracy report over the labelled test set
+  capture.js            prints a console snippet that captures a video's comments
+  review.js             builds a page for reviewing labels; applies the corrections
+  data/                 the labelled test set, one file per video
 extension/
   manifest.json
   icons/

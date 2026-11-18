@@ -186,7 +186,11 @@ function evaluate(videos, rules, H) {
           categories[guess].flagged++;
           if (guess === c.label) categories[guess].correct++;
         }
-        const wrong = categories[c.label] ? guess !== c.label : c.label === OK && guess;
+        // Wrong: a detectable label not matched, or any comment hidden for a
+        // category other than its label. Spam no rule targets (other_spam,
+        // offtopic) is not wrong for being missed, but is when hidden as
+        // something else, so the review page shows what the rules did to it.
+        const wrong = categories[c.label] ? guess !== c.label : !!guess;
         if (wrong) errors.push({ video: video.video, thread: t + 1, comment: i, label: c.label, predicted: guess, text: c.text });
       });
     });

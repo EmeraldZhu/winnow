@@ -105,3 +105,20 @@ test('capture: authors and mentions of them become pseudonyms', () => {
 test('capture: the snippet is valid JavaScript', () => {
   assert.doesNotThrow(() => new Function(`return ${buildSnippet('v1')}`));
 });
+
+test('accuracy: spam no rule targets is an error when hidden as something else', () => {
+  const v = {
+    video: 'v1',
+    threads: [
+      { seed: c('@user1', 'see my profile https://example.com', 'other_spam'), replies: [] },
+      { seed: c('@user2', 'see my profile', 'other_spam'), replies: [] },
+      { seed: c('@user3', 'wrong video? www.example.com', 'offtopic'), replies: [] },
+    ],
+  };
+  const r = A.evaluate([v], rules, H);
+  assert.deepStrictEqual(r.errors.map((e) => [e.thread, e.label, e.predicted]), [
+    [1, 'other_spam', 'promo_link'],
+    [3, 'offtopic', 'promo_link'],
+  ]);
+  assert.deepStrictEqual(r.undetectable, { other_spam: { labelled: 2, hidden: 1 }, offtopic: { labelled: 1, hidden: 1 } });
+});

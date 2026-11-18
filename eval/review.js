@@ -12,6 +12,7 @@
 //   v02 5.3 -> finance_chain
 // (video, thread.comment, new label; comment 0 is the thread's top comment).
 // See eval/README.md.
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const A = require('./accuracy.js');
@@ -99,8 +100,19 @@ function applyChanges(dir, changes) {
   return applied;
 }
 
+// Identifies the comments a page was built from, so a page only picks up
+// changes saved by a page built from the same comments. Comment keys alone
+// ("v01 2.3") repeat across datasets. Labels are left out on purpose: applying
+// a review changes them, and the page drops changes that have been applied.
+function datasetFingerprint(data) {
+  const hash = crypto.createHash('sha256');
+  for (const v of data) for (const c of v.threads.flat()) hash.update(`${c.key}\u0000${c.author}\u0000${c.text}\u0000`);
+  return hash.digest('hex').slice(0, 16);
+}
+
 function renderPage(data, rules) {
-  const payload = JSON.stringify({ data, labels: allLabels(rules), names: NAMES }).replace(/</g, '\\u003c');
+  const store = `winnow-review:${datasetFingerprint(data)}`;
+  const payload = JSON.stringify({ data, labels: allLabels(rules), names: NAMES, store }).replace(/</g, '\\u003c');
   return PAGE_TEMPLATE.replace('/*DATA*/null', () => payload);
 }
 
@@ -178,10 +190,11 @@ const PAGE_TEMPLATE = `<!doctype html>
   <textarea id="out" readonly aria-label="Your changes"></textarea>
 </div></div>
 <script>
-const { data, labels, names } = /*DATA*/null;
+const { data, labels, names, store } = /*DATA*/null;
 const comments = data.flatMap((v) => v.threads.flat());
 const byKey = new Map(comments.map((c) => [c.key, c]));
-const STORE = 'winnow-review';
+// Scoped to this dataset; see datasetFingerprint in review.js.
+const STORE = store;
 let changes = {};
 try { changes = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch (e) {}
 // Drop remembered changes that no longer apply (comment gone, or already applied).
@@ -331,4 +344,4 @@ function main(argv) {
 
 if (require.main === module) process.exitCode = main(process.argv.slice(2));
 
-module.exports = { reviewData, parseChanges, applyChanges, renderPage, allLabels };
+module.exports = { reviewData, parseChanges, applyChanges, renderPage, allLabels, datasetFingerprint };

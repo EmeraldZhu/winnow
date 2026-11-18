@@ -69,3 +69,21 @@ test('review: the page carries every comment, its label and what the rules did',
   const script = html.slice(html.indexOf('<script>') + 8, html.indexOf('</script>'));
   assert.doesNotThrow(() => new Function(script.replace(/^const \{[^\n]+\n/, '')));
 });
+
+test('review: a page only reuses changes saved for the same comments', () => {
+  const engine = A.loadEngine();
+  const page = (v) => R.renderPage(R.reviewData([v], rules, engine), rules);
+  const store = (html) => /"store":"(winnow-review:[0-9a-f]{16})"/.exec(html)[1];
+  const relabelled = JSON.parse(JSON.stringify(video));
+  relabelled.threads[0].replies[0].label = 'finance_chain';
+  const otherSet = JSON.parse(JSON.stringify(video));
+  otherSet.threads[0].replies[0].text = 'a different comment at the same position';
+
+  assert.strictEqual(store(page(relabelled)), store(page(video)), 'applying a review keeps the store');
+  assert.notStrictEqual(store(page(otherSet)), store(page(video)), 'another dataset with the same keys gets its own store');
+});
+
+test('review: the page shows what the rules did to spam no rule targets', () => {
+  const v = { video: 'v1', threads: [{ seed: { author: '@user1', text: 'see my profile https://example.com', time: '', label: 'other_spam' } }] };
+  assert.strictEqual(R.reviewData([v], rules, A.loadEngine())[0].threads[0][0].engine, 'promo_link');
+});

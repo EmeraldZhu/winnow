@@ -20,11 +20,17 @@
     }
   }
 
+
+  function repeatLength(text) {
+    return [...text.trim().replace(/\s+/g, ' ')].length;
+  }
+
   // crossVideoRepeat needs a shared cache: Map<commentHash, Set<videoId>>
   // with per-entry lastSeen for 7-day TTL pruning. Owned by content.js,
   // passed in as `ctx.hashCache`.
-  function checkCrossVideoRepeat(text, videoId, ctx, minVideos) {
+  function checkCrossVideoRepeat(text, videoId, ctx, minVideos, minLength) {
     if (!ctx || !ctx.hashCache) return false;
+    if (repeatLength(text) < minLength) return false;
     const hash = simpleHash(text.trim().toLowerCase());
     const entry = ctx.hashCache.get(hash);
     const now = Date.now();
@@ -56,7 +62,7 @@
       } else if (rule.type === 'pureEmojiOverLength') {
         fired = isPureEmojiOverLength(text, rule.minLength || 6);
       } else if (rule.type === 'crossVideoRepeat') {
-        fired = checkCrossVideoRepeat(text, ctx && ctx.videoId, ctx, rule.minVideos || 3);
+        fired = checkCrossVideoRepeat(text, ctx && ctx.videoId, ctx, rule.minVideos || 3, rule.minLength || 40);
       }
       if (fired) {
         score += rule.weight;

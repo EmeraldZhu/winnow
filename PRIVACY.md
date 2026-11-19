@@ -30,7 +30,7 @@ your device.
 | A random install ID, and when it was created | Reserved for a future shared blocklist (see below). It is not derived from you or your device | Until you reset it on the options page |
 | Your blocked and trusted lists: the @handles of commenters you reported or chose to always show | To hide or keep those accounts' comments | Until you remove them on the options page |
 | A queue of your reports. Each holds the commenter's @handle, the reason you picked, a short fingerprint of the comment text (not the text itself), the ID of the video, the rules version, the install ID and the time | Reserved for a future shared blocklist. Today the queue is never sent | Until removed |
-| A fingerprint of each comment Winnow has scanned, with the IDs of the videos it appeared on | To spot the same comment pasted under several videos | 7 days after it was last seen |
+| A fingerprint of each comment of 40 characters or more that Winnow has scanned, with the IDs of the videos it appeared on | To spot the same comment pasted under several videos | 7 days after it was last seen |
 
 Two of these, the report queue and the repeated-comment record, contain video
 IDs. Together they are a partial record, on your device only, of videos whose

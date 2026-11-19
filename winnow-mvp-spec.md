@@ -234,3 +234,7 @@ Does three things:
 - <2% false-positive rate measured via the reveal-counter (reveals ÷ hidden)
 - Blocklist reaches 1,000 promoted channels within 60 days of Phase 5
 - Zero successful poisoning incidents reaching `blocked` status
+
+The first two are estimated offline by `node eval/accuracy.js` over the
+labelled test set (see [`eval/README.md`](eval/README.md)); its
+false-positive rate is a stand-in for the reveal-counter until there are users.

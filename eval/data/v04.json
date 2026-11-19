@@ -1,0 +1,161 @@
+{
+  "video": "v04",
+  "collected": "2026-11-17",
+  "threads": [
+    {
+      "seed": {
+        "author": "@user1",
+        "text": "Are you looking for a laptop? If so, whats your budget and what do you need it for?",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": [
+        {
+          "author": "@user2",
+          "text": "Hey, i'm trying to buy my first laptop and i was looking at the asus zenbook's line up and i'm a student which i really need a great laptop for work, light gaming and i don't need an ARM and such. So can you suggest me a great zenbook laptop which can last me a good time hehe.",
+          "time": "3 weeks ago (edited)",
+          "label": "ok"
+        },
+        {
+          "author": "@user1",
+          "text": "The zenbook i suggested in thsi video is a great option",
+          "time": "3 weeks ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user3",
+          "text": "Considering I can get my old one sold, ~2k. Medium gaming capabilities, multi-tasking efficiency, uni stuff, editing, easy to carry around, good screen quality, longevity. But above all, I need it to fit my setup looks-wise.",
+          "time": "3 weeks ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user4",
+          "text": "Great video, man! I’d love to ask you for some laptops recommendations that deliver a real “cinema experience.” My main priority is watching movies, TV shows, and other entertainment, so I’m looking for the best possible picture quality, a large screen, excellent sound, and great battery life. Something premium, reliable, and built to last. Budget up to 2.000€ Thanks a lot!",
+          "time": "3 weeks ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user5",
+          "text": "Don't know if you will find this but I need a laptop for editing for videos with gaming on the side. I only have a budget of 1k to just need something useful.",
+          "time": "3 weeks ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user6",
+          "text": "I'm thinking of buying the ExpertBook Ultra with the 32GB 1TB and Ultra 7 config. it's on the pricey side, but I'm willing to pay it, i also had a Zenbook S14 it and a Mac Air, both were disappointing where Zenbook S14 display just died 7 months after purchse. I've already thought of getting the Mac Pro for the price with the M5 chip, but I absolutely despise the MacOS and wasted a year-long time ago trying to learn it with to no avail since its actually more annoying than a Linux Arch. Should I commit to the Asus ExpertBook Ultra or look for an alternative?",
+          "time": "2 weeks ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user7",
+          "text": "AI-assisted: Given your S14 display failure, I'd check the exact regional SKU's written return and warranty terms before committing; the Ultra 7/32GB/1TB label alone doesn't settle those. If you're buying soon, would a US$10 fixed comparison of two local Windows offers, including total cost and warranty/return checks, be worthwhile? If yes, please share your country, budget ceiling and purchase deadline. No paid work or payment request before your explicit agreement and a verified lawful payment route.",
+          "time": "2 weeks ago",
+          "label": "promo_link",
+          "note": "An AI bot offering a paid comparison service."
+        },
+        {
+          "author": "@user8",
+          "text": "I need a computer that can run light games like mc and terraria and also for school",
+          "time": "12 days ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user8",
+          "text": "And my budget is bad ik but sub 400 because my mom thinks that that is enough for a computer",
+          "time": "12 days ago",
+          "label": "ok"
+        },
+        {
+          "author": "@user9",
+          "text": "I am curious about those intel chips with Arc gpus. My laptop is mostly a client for my desktop, so I like the ability to game on the go without making the full compromise of a gaming laptop with all that extra weight and heat. Plus intel graphics is well supported on linux which is my my first pick for software development.",
+          "time": "12 days ago (edited)",
+          "label": "ok"
+        }
+      ]
+    },
+    {
+      "seed": {
+        "author": "@user10",
+        "text": "I agree with you Matt, I think 16/512 is the sweet spot in a laptop.",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": [
+        {
+          "author": "@user1",
+          "text": "Thanks [name]!",
+          "time": "3 weeks ago",
+          "label": "ok"
+        }
+      ]
+    },
+    {
+      "seed": {
+        "author": "@user11",
+        "text": "Hi I’m looking a laptop as an IT professional who will be using it for Linux machines, azure, SQL, etc. I’m looking at a budget around $1,000-1,500 but I don’t mind spending a bit more to get the best. When I asked ChatGPT and Claude, they recommended a few but both had Lenovo T14. Wanted to know your thoughts on which would be suitable? Planning on getting one soon for Black Friday if any deals open up. Thanks!",
+        "time": "7 hours ago (edited)",
+        "label": "ok"
+      },
+      "replies": []
+    },
+    {
+      "seed": {
+        "author": "@user12",
+        "text": "I'm looking to replace my old Microsoft surface pro. It started giving out and have no storage now. So I want to get a new laptop that has plenty of storage as I plan to have it for a long time. It's going to be a personal laptop and maybe occasionally used to edit videos for online content but nothing too crazy. What do you recommend?",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": []
+    },
+    {
+      "seed": {
+        "author": "@user13",
+        "text": "Lovely video, just got the lenovo legion 5i and i am glad that i did not sacrifice on anything",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": [
+        {
+          "author": "@user1",
+          "text": "Glad to hear you’re enjoying it. It’s a solid laptop",
+          "time": "3 weeks ago",
+          "label": "ok"
+        }
+      ]
+    },
+    {
+      "seed": {
+        "author": "@user14",
+        "text": "Bought a 5 year old m1 pro 16\" macbook pro (512gb/16gb config) for $680USD. It has everything I need in a macbook",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": []
+    },
+    {
+      "seed": {
+        "author": "@user15",
+        "text": "Would you say the Acer Swift 16 AI is the most powerful Windows laptop in its price range for some gaming and rendering?",
+        "time": "1 day ago",
+        "label": "ok"
+      },
+      "replies": []
+    },
+    {
+      "seed": {
+        "author": "@user16",
+        "text": "What's your opinion on the Honor magic book art 14 2025????",
+        "time": "3 weeks ago",
+        "label": "ok"
+      },
+      "replies": [
+        {
+          "author": "@user1",
+          "text": "Not sure! I havent used it",
+          "time": "13 days ago",
+          "label": "ok"
+        }
+      ]
+    }
+  ]
+}

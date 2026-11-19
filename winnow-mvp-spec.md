@@ -97,7 +97,7 @@ Each rule contributes a weight. Comment is hidden at total ≥ threshold (defaul
 - Year-bait patterns: `who('s| is) (still )?watching in \d{4}`, `who else is here in`, `am I the only one who`
 - `like if you`, `who's listening in`
 - Pure-emoji comments above N characters
-- Comment text identical to a comment seen by this client on ≥3 unrelated videos (local rolling hash cache, 7-day TTL)
+- Comment text identical to a comment seen by this client on ≥3 unrelated videos (local rolling hash cache, 7-day TTL). Only comments of at least 40 characters count; shorter ones ("Great video!", "first") recur through ordinary viewing and are not cached
 
 ### B. Promo / link spam
 - External links in comment body

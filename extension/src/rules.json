@@ -25,7 +25,7 @@
         { "id": "like_if_you", "type": "regex", "pattern": "like if you", "flags": "i", "weight": 0.8 },
         { "id": "whos_listening", "type": "regex", "pattern": "who'?s listening in", "flags": "i", "weight": 0.9 },
         { "id": "pure_emoji", "type": "pureEmojiOverLength", "minLength": 6, "weight": 1.0 },
-        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "weight": 1.2 }
+        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "minLength": 40, "weight": 1.2 }
       ]
     },
     "promo_link": {
@@ -39,7 +39,7 @@
         { "id": "phone_intl", "type": "regex", "pattern": "\\+\\d{1,3}[\\s-]?\\d{2,4}[\\s-]?\\d{2,4}[\\s-]?\\d{2,4}", "flags": "", "weight": 0.9 },
         { "id": "spaced_digits", "type": "regex", "pattern": "(\\d[\\s.-]){6,}\\d", "flags": "", "weight": 0.7 },
         { "id": "broker_cta", "type": "regex", "pattern": "(broker|agent|advisor).{0,20}(contact|reach|message|whatsapp|telegram)", "flags": "i", "weight": 1.1 },
-        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "weight": 1.2 }
+        { "id": "repeat_cross_video", "type": "crossVideoRepeat", "minVideos": 3, "minLength": 40, "weight": 1.2 }
       ]
     },
     "finance_chain": {

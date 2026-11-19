@@ -93,3 +93,34 @@ test('pure-emoji rule fires on emoji text', () => {
   const r = H.evaluateComment('🔥🔥🔥🔥🔥🔥', rules, { videoId: 'v', hashCache: new Map() });
   assert.ok(r && r.score >= rules.threshold);
 });
+
+// najaribu issue #9: the repeat rule must not hide short phrases everyone types.
+function seenOn(text, videoIds, hashCache = new Map()) {
+  return videoIds.map((videoId) => H.evaluateComment(text, rules, { videoId, hashCache }));
+}
+
+test('repeat: short common phrases are not hidden for repetition alone', () => {
+  for (const text of ['Great video!', 'first', 'lol', 'Thanks for sharing this ❤️', '  great   VIDEO!  ']) {
+    const hashCache = new Map();
+    const results = seenOn(text, ['v1', 'v2', 'v3', 'v4', 'v5'], hashCache);
+    for (const r of results) {
+      assert.ok(!r || !r.hits.some((h) => h.ruleId === 'repeat_cross_video'), `repeat fired on ${JSON.stringify(text)}`);
+    }
+    assert.strictEqual(hashCache.size, 0, 'short comments are not cached');
+  }
+});
+
+test('repeat: a long identical comment on three videos is hidden', () => {
+  const text = 'I made so much money working from home with this one simple method, check my channel';
+  const results = seenOn(text, ['v1', 'v2', 'v3']);
+  assert.strictEqual(results[0], null);
+  assert.strictEqual(results[1], null);
+  assert.ok(results[2].hits.some((h) => h.ruleId === 'repeat_cross_video'));
+  assert.ok(results[2].score >= rules.threshold);
+});
+
+test('repeat: the same long comment twice on one video does not count', () => {
+  const text = 'I made so much money working from home with this one simple method, check my channel';
+  const results = seenOn(text, ['v1', 'v1', 'v1', 'v2']);
+  assert.ok(results.every((r) => r === null));
+});

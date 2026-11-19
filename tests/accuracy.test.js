@@ -59,7 +59,7 @@ test('accuracy: counts per category, overall and per chain thread', () => {
 });
 
 test('accuracy: cross-video repeats are scored across videos, in order', () => {
-  const same = (id) => ({ video: id, threads: [{ seed: c('@user1', 'best song ever made', 'engagement_farm'), replies: [] }] });
+  const same = (id) => ({ video: id, threads: [{ seed: c('@user1', 'I have listened to this every single day for a whole year now', 'engagement_farm'), replies: [] }] });
   const r = A.evaluate([same('v1'), same('v2'), same('v3')], rules, H);
   assert.strictEqual(r.categories.engagement_farm.correct, 1); // only the third sighting
 });
